@@ -28,6 +28,8 @@ namespace ImageProcessing
         ProcessingMode mode = ProcessingMode.None;
         public Form1()
         {
+            this.Width = 950;
+            this.Height = 630;
             InitializeComponent();
             webcamTimer.Interval = 30;
             webcamTimer.Tick += WebcamTimer_Tick;
@@ -38,25 +40,25 @@ namespace ImageProcessing
             Bitmap currentFrame = GetWebcamFrame();
             if (currentFrame == null) return;
 
-                switch (mode)
-                {
-                    case ProcessingMode.Grayscale:
-                        webcam_grayscale(currentFrame);
-                        break;
+            switch (mode)
+            {
+                case ProcessingMode.Grayscale:
+                    webcam_grayscale(currentFrame);
+                    break;
 
-                    case ProcessingMode.Invert:
-                        webcam_invert(currentFrame);
-                        break;
+                case ProcessingMode.Invert:
+                    webcam_invert(currentFrame);
+                    break;
 
-                    case ProcessingMode.Sepia:
-                        webcam_sepia(currentFrame);
-                        break;
-                }
+                case ProcessingMode.Sepia:
+                    webcam_sepia(currentFrame);
+                    break;
+            }
 
-                var oldImage = pictureBox2.Image;
-                pictureBox2.Image = currentFrame;
-                oldImage?.Dispose();
-          
+            var oldImage = pictureBox2.Image;
+            pictureBox2.Image = currentFrame;
+            oldImage?.Dispose();
+
         }
 
         private void webcam_grayscale(Bitmap bmp)
@@ -326,7 +328,7 @@ namespace ImageProcessing
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                imageA = new Bitmap(ofd.FileName);  
+                imageA = new Bitmap(ofd.FileName);
                 pictureBox2.Image = imageA;
             }
         }
@@ -402,9 +404,10 @@ namespace ImageProcessing
         {
             load_image_button.Visible = false;
             subtract_button.Visible = false;
+            pictureBox3.Visible = true;
 
             Device[] devices = DeviceManager.GetAllDevices();
-            if(devices.Length == 0)
+            if (devices.Length == 0)
             {
                 MessageBox.Show("No webcam devices found.");
                 return;
@@ -412,12 +415,12 @@ namespace ImageProcessing
 
             current_device = devices.FirstOrDefault(d => d.Name.Contains("ManyCam")) ?? devices[0];
             current_device.ShowWindow(pictureBox1);
-     
+
         }
 
         private void stopWebcamToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           current_device?.Stop();
+            current_device?.Stop();
         }
 
         private Bitmap GetWebcamFrame()
@@ -446,6 +449,8 @@ namespace ImageProcessing
 
         private void subtractWebcamToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+
             if (pictureBox2.Image == null)
             {
                 MessageBox.Show("There is  no Background Found.");
@@ -508,6 +513,329 @@ namespace ImageProcessing
             mode = ProcessingMode.Invert;
             webcamTimer.Start();
         }
+
+       
+        
+       
+        private void smoothToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(pictureBox1.Image != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.Smooth(originalImage, 1);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void gausianBlurToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.GaussianBlur(originalImage, 1);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void sharpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1 != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.Sharpen(originalImage, 0);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void meanRemovalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1 != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.MeanRemoval(originalImage, 9);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void embossingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1 != null) 
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.EmbossLaplacian(originalImage);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void verticalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1 != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.EmbossVertical(originalImage);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void horizontalVerticalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1 != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.EmbossHorzVert(originalImage);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void allDirectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1 != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.EmbossAllDirections(originalImage);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void lossyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1 != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.EmbossLossy(originalImage);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void horizontalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1 != null)
+            {
+                originalImage = new Bitmap(pictureBox1.Image);
+                BitmapFilter.EmbossHorizontal(originalImage);
+                pictureBox2.Image = originalImage;
+            }
+        }
+
+        private void subtractionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            subtract_button.Visible = true;
+            load_bg_button.Visible = true;
+            pictureBox3.Visible = true;
+            this.Width = 1040;
+            
+        }
     }
+
+    public class ConvMatrix
+    {
+        public int TopLeft = 0, TopMid = 0, TopRight = 0;
+        public int MidLeft = 0, Pixel = 1, MidRight = 0;
+        public int BottomLeft = 0, BottomMid = 0, BottomRight = 0;
+        public int Factor = 1;
+        public int Offset = 0;
+
+        public void SetAll(int nVal)
+        {
+            TopLeft = TopMid = TopRight = MidLeft = Pixel = MidRight =
+                      BottomLeft = BottomMid = BottomRight = nVal;
+        }
+    }
+    // Convolution Matrix Functions
+    public class BitmapFilter
+    {
+        public static bool Conv3x3(Bitmap b, ConvMatrix m)
+        {
+            // Avoid divide by zero errors 
+            if (0 == m.Factor)
+                return false; Bitmap
+            // GDI+ still lies to us - the return format is BGR, NOT RGB.  
+            bSrc = (Bitmap)b.Clone();
+
+            BitmapData bmData = b.LockBits(new Rectangle(0, 0, b.Width, b.Height),
+                                ImageLockMode.ReadWrite,
+                                PixelFormat.Format24bppRgb);
+            BitmapData bmSrc = bSrc.LockBits(new Rectangle(0, 0, bSrc.Width, bSrc.Height),
+                               ImageLockMode.ReadWrite,
+                               PixelFormat.Format24bppRgb);
+            int stride = bmData.Stride;
+            int stride2 = stride * 2;
+
+            System.IntPtr Scan0 = bmData.Scan0;
+            System.IntPtr SrcScan0 = bmSrc.Scan0;
+
+            unsafe
+            {
+                byte* p = (byte*)(void*)Scan0;
+                byte* pSrc = (byte*)(void*)SrcScan0;
+                int nOffset = stride - b.Width * 3;
+                int nWidth = b.Width - 2;
+                int nHeight = b.Height - 2;
+
+                int nPixel;
+                for (int y = 0; y < nHeight; ++y)
+                {
+                    for (int x = 0; x < nWidth; ++x)
+                    {
+                        nPixel = ((((pSrc[2] * m.TopLeft) +
+                            (pSrc[5] * m.TopMid) +
+                            (pSrc[8] * m.TopRight) +
+                            (pSrc[2 + stride] * m.MidLeft) +
+                            (pSrc[5 + stride] * m.Pixel) +
+                            (pSrc[8 + stride] * m.MidRight) +
+                            (pSrc[2 + stride2] * m.BottomLeft) +
+                            (pSrc[5 + stride2] * m.BottomMid) +
+                            (pSrc[8 + stride2] * m.BottomRight))
+                            / m.Factor) + m.Offset);
+
+                        if (nPixel < 0) nPixel = 0;
+                        if (nPixel > 255) nPixel = 255;
+                        p[5 + stride] = (byte)nPixel;
+                        nPixel = ((((pSrc[1] * m.TopLeft) +
+                            (pSrc[4] * m.TopMid) +
+                            (pSrc[7] * m.TopRight) +
+                            (pSrc[1 + stride] * m.MidLeft) +
+                            (pSrc[4 + stride] * m.Pixel) +
+                            (pSrc[7 + stride] * m.MidRight) +
+                            (pSrc[1 + stride2] * m.BottomLeft) +
+                            (pSrc[4 + stride2] * m.BottomMid) +
+                            (pSrc[7 + stride2] * m.BottomRight))
+                            / m.Factor) + m.Offset);
+
+
+                        if (nPixel < 0) nPixel = 0;
+                        if (nPixel > 255) nPixel = 255;
+                        p[4 + stride] = (byte)nPixel;
+
+                        nPixel = ((((pSrc[0] * m.TopLeft) +
+                                       (pSrc[3] * m.TopMid) +
+                                       (pSrc[6] * m.TopRight) +
+                                       (pSrc[0 + stride] * m.MidLeft) +
+                                       (pSrc[3 + stride] * m.Pixel) +
+                                       (pSrc[6 + stride] * m.MidRight) +
+                                       (pSrc[0 + stride2] * m.BottomLeft) +
+                                       (pSrc[3 + stride2] * m.BottomMid) +
+                                       (pSrc[6 + stride2] * m.BottomRight))
+                            / m.Factor) + m.Offset);
+
+                        if (nPixel < 0) nPixel = 0;
+                        if (nPixel > 255) nPixel = 255;
+                        p[3 + stride] = (byte)nPixel;
+
+                        p += 3;
+                        pSrc += 3;
+
+                    }
+                    p += nOffset;
+                    pSrc += nOffset;
+                }
+            }
+            b.UnlockBits(bmData);
+            bSrc.UnlockBits(bmSrc);
+            return true;
+
+        }
+        public static bool Smooth(Bitmap b, int nWeight)
+        {
+            ConvMatrix m = new ConvMatrix();
+            m.SetAll(1);
+            m.Pixel = nWeight;
+            m.Factor = nWeight + 8;
+            return BitmapFilter.Conv3x3(b, m);
+        }
+        public static bool GaussianBlur(Bitmap b, int nweight = 16)
+        {
+            ConvMatrix m = new ConvMatrix();
+            m.TopLeft = 1; m.TopMid = 2; m.TopRight = 1;
+            m.MidLeft = 2; m.Pixel = 4; m.MidRight = 2;
+            m.BottomLeft = 1; m.BottomMid = 2; m.BottomRight = 1;
+
+            m.Factor = 16;
+            m.Offset = 0;
+            return Conv3x3(b, m);
+        }
+        public static bool Sharpen(Bitmap b, int nWeight = 11)
+        {
+            ConvMatrix m = new ConvMatrix();
+            m.SetAll(0);
+            m.Pixel = nWeight;
+            m.TopMid = m.MidLeft = m.MidRight = m.BottomMid = -2;
+            m.Factor = nWeight - 8;
+            m.Offset = 0;
+            return Conv3x3(b, m);
+        }
+        public static bool MeanRemoval(Bitmap b, int nWeight = 9)
+        {
+            ConvMatrix m = new ConvMatrix();
+            m.SetAll(-1);
+            m.Pixel = nWeight;
+            m.Factor = 1;
+            m.Offset = 0;
+            return Conv3x3(b, m);
+        }
+        public static bool EmbossLaplacian(Bitmap b)
+        {
+            ConvMatrix m = new ConvMatrix();
+            m.TopLeft = -1; m.TopMid = 0; m.TopRight = -1;
+            m.MidLeft = 0; m.Pixel = 4; m.MidRight = 0;
+            m.BottomLeft = -1; m.BottomMid = 0; m.BottomRight = -1;
+
+            m.Factor = 1;
+            m.Offset = 128;
+            return Conv3x3(b, m);
+        }
+        public static bool EmbossHorzVert(Bitmap b) {
+            ConvMatrix m = new ConvMatrix();
+            m.SetAll(0);
+            m.TopMid = m.MidLeft = m.MidRight = m.BottomMid = -1;
+            m.Pixel = 4;
+
+            m.Factor = 1;
+            m.Offset = 127;
+            return Conv3x3(b, m);
+        }
+        public static bool EmbossAllDirections(Bitmap b) 
+        { 
+            ConvMatrix m = new ConvMatrix();
+            m.SetAll(-1);
+            m.Pixel = 8;
+            m.Factor = 1;
+            m.Offset = 127;
+            return Conv3x3(b, m);
+        }
+
+        public static bool EmbossLossy(Bitmap b)
+        {
+            ConvMatrix m = new ConvMatrix();
+            m.SetAll(-2);
+            m.TopLeft = m.TopRight = m.BottomMid = 1;
+            m.Pixel = 4;
+            m.Factor = 1;
+            m.Offset = 127;
+            return Conv3x3(b, m);
+        }
+        public static bool EmbossHorizontal(Bitmap b) 
+        {
+            ConvMatrix m = new ConvMatrix();
+            m.SetAll(0);
+            m.MidLeft = m.MidRight = -1;
+            m.Pixel = 2;
+            m.Factor = 1;
+            m.Offset = 127;
+            return Conv3x3(b, m);
+        }
+        public static bool EmbossVertical(Bitmap b)
+        {
+            ConvMatrix m = new ConvMatrix();
+            m.SetAll(0);
+            m.TopMid = -1;
+            m.BottomMid = 1;
+            m.Factor = 1;
+            m.Offset = 127;
+            return Conv3x3(b, m);
+        }
+
+    }
+
 }
 
